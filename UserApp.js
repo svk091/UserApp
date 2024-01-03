@@ -15,7 +15,7 @@ const secretKey =  "EveryDayIsNotSunday";
 
 app.use(express.json());
 
-mongoose.connect('mongodb+srv://vamsikrishna:krishnamongodb@krdb.notjpqi.mongodb.net/UserApp');
+mongoose.connect('mongodb+srv://vamsikrishna:krixxxxxxx@krdb.notjpqi.mongodb.net/UserApp');
 
 const userSchema = mongoose.Schema({
     email : String,
@@ -24,20 +24,12 @@ const userSchema = mongoose.Schema({
 
 const Users = mongoose.model('Users', userSchema);
 
-async function checkIfUserExists(emailToCheck) {
-    const isExists = await Users.findOne({
-        email : emailToCheck
-    });
+async function checkIfUserExists(emailToCheck, passwordToCheck) {
+    const query = passwordToCheck ? { email : emailToCheck, password : passwordToCheck} : {email : emailToCheck};
+    const isExists = await Users.findOne(query);
     return !!isExists;
 }
 
-async function checkIfUserExists(emailToCheck, passwordToCheck) {
-    const isExists = await Users.findOne({
-        email : emailToCheck,
-        password : passwordToCheck
-    });
-    return !!isExists;
-}
 
 const credentialSchema = z.object({
     email : z.string().email(),
@@ -98,7 +90,6 @@ app.post('/signin', async (req, res) => {
         token
     })
 })
-
 app.get('/users', async (req, res) => {
     const token = req.headers.authorization;
     try{
@@ -108,17 +99,11 @@ app.get('/users', async (req, res) => {
             })
         }
 
-    try{
         const decoded = jwt.verify(token, secretKey);
-    }catch(err) {
-        return res.json({
-            msg : 'verifying error'
-        })
-    }
-        
+
         const email = decoded.email;
         
-        const otherUsers = await Users.find({}).toArray();
+        const otherUsers = await Users.find({});
         return res.json({otherUsers})
     }catch(err) {
         return res.status(403).json({
