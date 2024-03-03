@@ -15,7 +15,7 @@ const secretKey =  "EveryDayIsNotSunday";
 
 app.use(express.json());
 
-mongoose.connect('mongodb+srv://vamsikrishna:krixxxxxxx@krdb.notjpqi.mongodb.net/UserApp');
+mongoose.connect('mongodb://localhost:27017/UserApp');
 
 const userSchema = mongoose.Schema({
     email : String,
